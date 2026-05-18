@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة رسم الكوكيز السحرية 🍪</title>
+    <style>
+        /* خلفية هادئة بجمالية الـ Minimalist / Dark Academia الخفيفة */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f4eae1; /* لون بيج دافئ */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #4a3728; /* بني داكن مريح للعين */
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        p {
+            font-size: 1rem;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        /* حاوية اللوحة */
+        .canvas-container {
+            position: relative;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(74, 55, 40, 0.08);
+        }
+
+        canvas {
+            border-radius: 12px;
+            background-color: #faf6f0;
+            display: block;
+        }
+
+        /* أزرار التحكم */
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            background-color: #6f4e37; /* بني شوكولاتة */
+            color: #ffffff;
+            border: none;
+            padding: 10px 24px;
+            font-size: 0.95rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(111, 78, 55, 0.2);
+        }
+
+        button:hover {
+            background-color: #4a3728;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>صانع الكوكيز السحري ☕</h1>
+    <p>اضغطي على الزر لتشاهدي الأداة وهي ترسم قطعة كوكيز دافئة...</p>
+
+    <div class="canvas-container">
+        <canvas id="cookieCanvas" width="350" height="350"></canvas>
+    </div>
+
+    <div class="controls">
+        <button onclick="startDrawing()">ابدأ الرسم التلقائي ✨</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('cookieCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // تنظيف اللوحة في البداية
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        function drawCircleAnimated(centerX, centerY, radius, color, duration) {
+            return new Promise((resolve) => {
+                let start = null;
+                function step(timestamp) {
+                    if (!start) start = timestamp;
+                    let progress = (timestamp - start) / duration;
+                    if (progress > 1) progress = 1;
+
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, radius * progress, 0, 2 * Math.PI);
+                    ctx.fillStyle = color;
+                    ctx.fill();
+
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(step);
+            });
+        }
+
+        function drawChipAnimated(x, y, radius, color, delay) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                    ctx.fillStyle = color;
+                    ctx.fill();
+                    resolve();
+                }, delay);
+            });
+        }
+
+        async function startDrawing() {
+            // إعادة ضبط اللوحة
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 1. رسم القاعدة الأساسية للكوكيز (بني فاتح/ذهبي)
+            await drawCircleAnimated(175, 175, 110, '#dd9e57', 800);
+            
+            // 2. رسم الطبقة الداخلية لتعطي عمق وتفاصيل (قوام الكوكيز)
+            await drawCircleAnimated(175, 175, 100, '#cd853f', 500);
+
+            // 3. إضافة قطع الشوكولاتة (Choc Chips) تظهر واحدة تلو الأخرى بشكل لطيف
+            const chips = [
+                {x: 130, y: 120, r: 14},
+                {x: 220, y: 140, r: 16},
+                {x: 170, y: 190, r: 18},
+                {x: 120, y: 210, r: 12},
+                {x: 210, y: 230, r: 15},
+                {x: 175, y: 105, r: 11},
+                {x: 240, y: 190, r: 10}
+            ];
+
+            for (let chip of chips) {
+                // رسم كل قطعة شوكولاتة بلون داكن غني
+                await drawChipAnimated(chip.x, chip.y, chip.r, '#4a3728', 250);
+                
+                // إضافة لمسة إضاءة صغيرة داخل قطعة الشوكولاتة عشان تلمع وتبين كيوت
+                ctx.beginPath();
+                ctx.arc(chip.x - (chip.r/3), chip.y - (chip.r/3), chip.r/4, 0, 2 * Math.PI);
+                ctx.fillStyle = '#6f4e37';
+                ctx.fill();
+            }
+        }
+    </script>
+
+</body>
+</html>
