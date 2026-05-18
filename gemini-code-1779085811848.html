@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المفكرة السرية العتيقة 📜✨</title>
+    <style>
+        /* أجواء لوحة بنترست: ألوان دافئة، غامضة ومريحة */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f2e6df; /* خلفية كريمي دافئة */
+            font-family: 'Georgia', 'Times New Roman', serif;
+            color: #2b1d13; /* بني غامق جداً وفخم */
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            margin-bottom: 30px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        /* حاوية الكتاب السحري */
+        .book-container {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .book {
+            width: 260px;
+            height: 360px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 15px 35px rgba(43, 29, 19, 0.15);
+            border-radius: 4px 15px 15px 4px;
+        }
+
+        /* غلاف الكتاب */
+        .cover {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #4a3321; /* بني شوكولاتة داكن وعتيق */
+            border-radius: 4px 15px 15px 4px;
+            transform-origin: left center;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backface-visibility: hidden;
+            z-index: 2;
+            border-left: 8px solid #332214;
+        }
+
+        .cover-title {
+            color: #e6c594; /* ذهبي مطفي فخم */
+            font-size: 1.3rem;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #e6c594;
+            margin: 15px;
+            border-radius: 8px;
+        }
+
+        .cover-decor {
+            font-size: 2rem;
+            color: #e6c594;
+        }
+
+        /* الصفحات الداخلية للكتاب */
+        .page {
+            position: absolute;
+            width: 95%;
+            height: 96%;
+            top: 2%;
+            right: 0;
+            background-color: #fffdf9; /* ورق عتيق */
+            border-radius: 2px 12px 12px 2px;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: inset 7px 0 20px rgba(0,0,0,0.06);
+        }
+
+        .quote-text {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            text-align: center;
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            color: #3d2b1f;
+        }
+
+        /* الأنميشن عند فتح الكتاب */
+        .book-container.open .cover {
+            transform: rotateY(160deg);
+        }
+
+        .book-container.open .quote-text {
+            opacity: 1;
+            transition-delay: 0.4s;
+        }
+
+        /* تلميح أسفل الشاشة */
+        .hint {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>الرسائل والمفكرات لا تكذب أبداً... ☕⏳</h1>
+
+    <div class="book-container" onclick="toggleBook()">
+        <div class="book" id="magicBook">
+            <div class="cover">
+                <div class="cover-decor">✦</div>
+                <div class="cover-title">مفكرة الليل والسر الهادئ</div>
+                <div class="cover-decor">✦</div>
+            </div>
+            <div class="page">
+                <p class="quote-text" id="quoteField">جاري فتح الرسالة السرية...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="hint">اضغطي على الكتاب لفتحه وقراءة ما يخفيه...</div>
+
+    <script>
+        // مصفوفة من العبارات الجمالية والغامضة بأسلوب Dark Romance / Aesthetic لطيف
+        const quotes = [
+            "«العتمة ليست مظلمة دائماً، أحياناً تكون ملاذاً للذين تعبت أعينهم من تزييف الحقائق.» 🖤",
+            "«القهوة المرة، والرسائل القديمة، ونظرة واحدة صادقة.. هذا كل ما يتطلبه الأمر لتشرق الروح.» ☕📜",
+            "«قد تخفي الكلمات الكثير من الأسرار، ولكن العيون.. العيون دائماً وأبداً لا تكذب.» ✨",
+            "«في زاوية هادئة من هذا العالم، هناك دائماً قصة لم تُحك بعد، تنتظر من يقرأها بقلبه.» 🕯️",
+            "«الجمال الحقيقي يبدأ في اللحظة التي تقرر فيها أن تكون نفسك، بكل غموضك وتفاصيلك الثمينة.» 🥀"
+        ];
+
+        let isOpen = false;
+
+        function toggleBook() {
+            const bookContainer = document.querySelector('.book-container');
+            const quoteField = document.getElementById('quoteField');
+            
+            if (!isOpen) {
+                // إذا كان مغلق، نختار عبارة عشوائية ونفتح الكتاب
+                const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+                quoteField.textContent = randomQuote;
+                bookContainer.classList.add('open');
+                isOpen = true;
+            } else {
+                // إذا كان مفتوح، نغلقه
+                bookContainer.classList.remove('open');
+                isOpen = false;
+            }
+        }
+    </script>
+
+</body>
+</html>
